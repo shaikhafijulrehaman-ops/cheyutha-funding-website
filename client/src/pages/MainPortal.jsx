@@ -116,19 +116,24 @@ export default function MainPortal({ onDonateClick, navigateTo }) {
 
     // Load initial data
     useEffect(() => {
+        // Safety timeout to guarantee hero section renders within 2 seconds
+        const safetyTimer = setTimeout(() => {
+            setHeroLoading(false);
+        }, 2000);
+
         const loadData = async () => {
             setHeroLoading(true);
             try {
                 const [m, p, g, s, q, e, set, ga, slides] = await Promise.all([
-                    api.getMembers(),
-                    api.getPrograms(),
-                    api.getGallery(),
-                    api.getSponsors(),
-                    api.getQuotes(),
-                    api.getEvents(),
-                    api.getSettings(),
-                    api.getGroundActions(),
-                    api.getSlides()
+                    api.getMembers().catch(() => []),
+                    api.getPrograms().catch(() => []),
+                    api.getGallery().catch(() => []),
+                    api.getSponsors().catch(() => []),
+                    api.getQuotes().catch(() => []),
+                    api.getEvents().catch(() => []),
+                    api.getSettings().catch(() => null),
+                    api.getGroundActions().catch(() => []),
+                    api.getSlides().catch(() => [])
                 ]);
                 setMembers(m || []);
                 setPrograms(p || []);
@@ -143,20 +148,23 @@ export default function MainPortal({ onDonateClick, navigateTo }) {
                 setHeroSlides(sortedSlides);
 
                 // Load compliance certificates
-                const certs = await api.getCertificates();
+                const certs = await api.getCertificates().catch(() => []);
                 setCertificates(certs || []);
             } catch (err) {
                 console.error("Failed to load content API: ", err);
             } finally {
+                clearTimeout(safetyTimer);
                 setHeroLoading(false);
             }
         };
         loadData();
+        return () => clearTimeout(safetyTimer);
     }, []);
 
     // Real-time SSE synchronization
     useEffect(() => {
-        const sse = new EventSource((import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '') + '/api/realtime');
+        const sseUrl = (api.API_URL || '/api').replace(/\/api$/, '') + '/api/realtime';
+        const sse = new EventSource(sseUrl);
         
         sse.onmessage = (event) => {
             try {
