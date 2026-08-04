@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const apiRoutes = require('./routes/api');
@@ -8,22 +9,31 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: '*', // For development, allow all origins
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static uploads if any (optional, mostly using Supabase storage)
-// app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// Serve static frontend assets from client/dist
+const clientDistPath = path.join(__dirname, '../../client/dist');
+app.use(express.static(clientDistPath));
 
-// Routes
+// API Routes
 app.use('/api', apiRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
+// SPA Fallback for client-side routing (non-API routes)
+app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(clientDistPath, 'index.html'), (err) => {
+        if (err) next();
+    });
 });
 
 // Error handling middleware
