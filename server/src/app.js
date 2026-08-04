@@ -28,9 +28,11 @@ app.get('/health', (req, res) => {
     res.json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
-// SPA Fallback for client-side routing (non-API routes)
-app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
+// SPA Fallback for client-side routing (Express 5 compatible)
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/health')) {
+        return next();
+    }
     res.sendFile(path.join(clientDistPath, 'index.html'), (err) => {
         if (err) next();
     });
