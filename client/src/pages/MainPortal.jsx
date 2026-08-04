@@ -114,9 +114,8 @@ export default function MainPortal({ onDonateClick, navigateTo }) {
     const statsSectionRef = useRef(null);
     const [statsVisible, setStatsVisible] = useState(false);
 
-    // Load initial data
+    // Load initial data independently using Promise.allSettled
     useEffect(() => {
-        // Safety timeout to guarantee hero section renders within 2 seconds
         const safetyTimer = setTimeout(() => {
             setHeroLoading(false);
         }, 2000);
@@ -124,34 +123,40 @@ export default function MainPortal({ onDonateClick, navigateTo }) {
         const loadData = async () => {
             setHeroLoading(true);
             try {
-                const [m, p, g, s, q, e, set, ga, slides] = await Promise.all([
-                    api.getMembers().catch(() => []),
-                    api.getPrograms().catch(() => []),
-                    api.getGallery().catch(() => []),
-                    api.getSponsors().catch(() => []),
-                    api.getQuotes().catch(() => []),
-                    api.getEvents().catch(() => []),
-                    api.getSettings().catch(() => null),
-                    api.getGroundActions().catch(() => []),
-                    api.getSlides().catch(() => [])
+                const results = await Promise.allSettled([
+                    api.getMembers(),
+                    api.getPrograms(),
+                    api.getGallery(),
+                    api.getSponsors(),
+                    api.getQuotes(),
+                    api.getEvents(),
+                    api.getSettings(),
+                    api.getGroundActions(),
+                    api.getSlides(),
+                    api.getCertificates()
                 ]);
-                setMembers(m || []);
-                setPrograms(p || []);
-                setGallery(g || []);
-                setSponsors(s || []);
-                setQuotes(q || []);
-                setEvents(e || []);
-                setSettings(set);
-                setGroundActions(ga || []);
-                
-                const sortedSlides = [...(slides || [])].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+
+                const getValue = (idx, fallback) => {
+                    const res = results[idx];
+                    return res && res.status === 'fulfilled' && res.value !== undefined && res.value !== null ? res.value : fallback;
+                };
+
+                setMembers(getValue(0, []));
+                setPrograms(getValue(1, []));
+                setGallery(getValue(2, []));
+                setSponsors(getValue(3, []));
+                setQuotes(getValue(4, []));
+                setEvents(getValue(5, []));
+                setSettings(getValue(6, null));
+                setGroundActions(getValue(7, []));
+
+                const rawSlides = getValue(8, []);
+                const sortedSlides = Array.isArray(rawSlides) ? [...rawSlides].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)) : [];
                 setHeroSlides(sortedSlides);
 
-                // Load compliance certificates
-                const certs = await api.getCertificates().catch(() => []);
-                setCertificates(certs || []);
+                setCertificates(getValue(9, []));
             } catch (err) {
-                console.error("Failed to load content API: ", err);
+                console.error("Content fetch error:", err);
             } finally {
                 clearTimeout(safetyTimer);
                 setHeroLoading(false);

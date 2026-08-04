@@ -18,16 +18,31 @@ const headers = (token) => {
     return h;
 };
 
+const safeFetchJson = async (url, fallbackValue = []) => {
+    try {
+        const res = await fetch(url);
+        if (!res.ok) {
+            console.warn(`API fetch status ${res.status}: ${url}`);
+            return fallbackValue;
+        }
+        const data = await res.json();
+        return data !== undefined && data !== null ? data : fallbackValue;
+    } catch (err) {
+        console.error(`API fetch error (${url}):`, err.message);
+        return fallbackValue;
+    }
+};
+
 export const api = {
     // Public Reads
-    getMembers: () => fetch(`${API_URL}/members`).then(res => res.json()),
-    getPrograms: () => fetch(`${API_URL}/programs`).then(res => res.json()),
-    getGallery: () => fetch(`${API_URL}/gallery`).then(res => res.json()),
-    getSponsors: () => fetch(`${API_URL}/sponsors`).then(res => res.json()),
-    getQuotes: () => fetch(`${API_URL}/quotes`).then(res => res.json()),
-    getEvents: () => fetch(`${API_URL}/events`).then(res => res.json()),
-    getGroundActions: () => fetch(`${API_URL}/ground-actions`).then(res => res.json()),
-    getSettings: () => fetch(`${API_URL}/settings`).then(res => res.json()),
+    getMembers: () => safeFetchJson(`${API_URL}/members`, []),
+    getPrograms: () => safeFetchJson(`${API_URL}/programs`, []),
+    getGallery: () => safeFetchJson(`${API_URL}/gallery`, []),
+    getSponsors: () => safeFetchJson(`${API_URL}/sponsors`, []),
+    getQuotes: () => safeFetchJson(`${API_URL}/quotes`, []),
+    getEvents: () => safeFetchJson(`${API_URL}/events`, []),
+    getGroundActions: () => safeFetchJson(`${API_URL}/ground-actions`, []),
+    getSettings: () => safeFetchJson(`${API_URL}/settings`, {}),
 
     // Contact & Volunteers
     submitContact: (data) => fetch(`${API_URL}/contact`, {
@@ -169,7 +184,7 @@ export const api = {
         body: JSON.stringify(data)
     }).then(res => res.json()),
 
-    getSlides: () => fetch(`${API_URL}/slides`).then(res => res.json()),
+    getSlides: () => safeFetchJson(`${API_URL}/slides`, []),
     createSlide: (data, token) => fetch(`${API_URL}/admin/slides`, {
         method: 'POST',
         headers: headers(token),
@@ -221,7 +236,7 @@ export const api = {
         body: JSON.stringify(data)
     }).then(res => res.json()),
 
-    getCertificates: () => fetch(`${API_URL}/certificates`).then(res => res.json()),
+    getCertificates: () => safeFetchJson(`${API_URL}/certificates`, []),
     createCertificate: (data, token) => fetch(`${API_URL}/admin/certificates`, {
         method: 'POST',
         headers: headers(token),
