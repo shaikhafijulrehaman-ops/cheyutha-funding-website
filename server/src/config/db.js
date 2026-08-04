@@ -618,6 +618,19 @@ const db = {
         if (error) throw error;
         return data;
     },
+    getSlides: async () => {
+        if (useMock) {
+            const data = readMockDb();
+            if (!data.hero_slider) {
+                data.hero_slider = [];
+                writeMockDb(data);
+            }
+            return data.hero_slider.sort((a, b) => a.sort_order - b.sort_order);
+        }
+        const { data, error } = await supabase.from('hero_slider').select('*').order('sort_order', { ascending: true });
+        if (error) throw error;
+        return data;
+    },
     createHeroSlide: async (slide) => {
         if (useMock) {
             const data = readMockDb();

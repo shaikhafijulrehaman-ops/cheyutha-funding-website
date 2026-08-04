@@ -143,6 +143,15 @@ router.get('/settings', async (req, res) => {
     }
 });
 
+router.get('/slides', async (req, res) => {
+    try {
+        const data = await db.getSlides();
+        res.json(data || []);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // --- Contact & Volunteer Submissions ---
 router.post('/contact', async (req, res) => {
     try {
