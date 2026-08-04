@@ -1,0 +1,171 @@
+{
+  "donations": [],
+  "community_members": [
+    {
+      "id": "member-1",
+      "name": "Dr. A. Srinivas Rao",
+      "role": "President & Founder",
+      "responsibility": "Strategic direction, partnerships, and overall leadership.",
+      "description": "Dr. Srinivas has over 15 years of social work experience in community development and healthcare support.",
+      "image_url": "/assets/placeholder-founder.jpg",
+      "sort_order": 1
+    },
+    {
+      "id": "member-2",
+      "name": "Murali Krishna",
+      "role": "General Secretary",
+      "responsibility": "Managing daily NGO activities, legal affairs, and volunteer coordination.",
+      "description": "Murali ensures the smooth operation of ground-level charity events and compliance with local authorities.",
+      "image_url": "/assets/placeholder-secretary.jpg",
+      "sort_order": 2
+    },
+    {
+      "id": "member-3",
+      "name": "V. Lakshmi",
+      "role": "Treasurer",
+      "responsibility": "Financial transparency, budgeting, auditing, and donation allocation.",
+      "description": "Lakshmi monitors the allocation of every single donation, ensuring complete financial integrity and transparency.",
+      "image_url": "/assets/placeholder-treasurer.jpg",
+      "sort_order": 3
+    }
+  ],
+  "programs": [
+    {
+      "id": "prog-1",
+      "title": "Child Education Support",
+      "description": "Providing free study materials, uniforms, and digital tuition assistance to underprivileged children in government schools.",
+      "image_url": "/assets/program-education.jpg",
+      "sort_order": 1
+    },
+    {
+      "id": "prog-2",
+      "title": "Healthcare Camps",
+      "description": "Organizing regular free medical diagnostics, distribution of essential medicines, and nutrition support in rural communities.",
+      "image_url": "/assets/program-health.jpg",
+      "sort_order": 2
+    },
+    {
+      "id": "prog-3",
+      "title": "Women Empowerment",
+      "description": "Conducting vocational training courses including sewing, computer literacy, and handicraft making to help women achieve financial independence.",
+      "image_url": "/assets/program-women.jpg",
+      "sort_order": 3
+    },
+    {
+      "id": "prog-1784713422585",
+      "created_at": "2026-07-22T09:43:42.585Z",
+      "title": "boy",
+      "description": "vhjhgdjdjk dkhchbdj",
+      "image_url": "",
+      "sort_order": 0
+    }
+  ],
+  "gallery": [
+    {
+      "id": "gal-1",
+      "image_url": "/assets/gallery-1.jpg",
+      "caption": "Community feeding program distribution"
+    },
+    {
+      "id": "gal-2",
+      "image_url": "/assets/gallery-2.jpg",
+      "caption": "Free school kit distribution to children"
+    },
+    {
+      "id": "gal-3",
+      "image_url": "/assets/gallery-3.jpg",
+      "caption": "Free health checkup camp conducted by doctors"
+    }
+  ],
+  "sponsors": [
+    {
+      "id": "spon-1",
+      "name": "Dabur India",
+      "logo_url": "/assets/sponsors/dabur.png",
+      "is_present": true,
+      "sort_order": 1
+    }
+  ],
+  "quotes": [
+    {
+      "id": "q-1",
+      "quote": "No one has ever become poor by giving.",
+      "author": "Anne Frank"
+    },
+    {
+      "id": "q-2",
+      "quote": "We make a living by what we get, but we make a life by what we give.",
+      "author": "Winston Churchill"
+    },
+    {
+      "id": "q-3",
+      "quote": "The best way to find yourself is to lose yourself in the service of others.",
+      "author": "Mahatma Gandhi"
+    }
+  ],
+  "news_events": [
+    {
+      "id": "event-1",
+      "title": "Upcoming Free Healthcare Camp",
+      "content": "We are organizing a comprehensive medical check-up camp at Tadigadapa center, featuring pediatrician and general physician consultations.",
+      "type": "event",
+      "date": "2026-08-15",
+      "image_url": "/assets/event-health.jpg"
+    },
+    {
+      "id": "event-2",
+      "title": "Successful Distribution of School Kits",
+      "content": "Over 200 children received school bags, notebooks, and writing materials at our education drive held last Sunday. Thank you to our donors!",
+      "type": "news",
+      "date": "2026-07-10",
+      "image_url": "/assets/news-edu.jpg"
+    }
+  ],
+  "ground_actions": [
+    {
+      "id": "action-1",
+      "title": "Mega Health Screening & Medicine Drive",
+      "subtitle": "Critical healthcare checkups and diagnostics in rural Vijayawada.",
+      "description": "We successfully organized a free diagnostic healthcare camp. Over 300 individuals from rural families received general physician checkups, pediatric consultations, blood sugar diagnostics, and complimentary generic medicines. The action targeted the health issues in remote villages where access to hospitals is scarce.",
+      "location": "Tadigadapa Gram Panchayat, Vijayawada",
+      "date": "2026-06-15",
+      "cover_image": "/assets/program-health.jpg",
+      "image_2": "/assets/gallery-1.jpg",
+      "image_3": "/assets/gallery-2.jpg",
+      "image_4": "/assets/gallery-3.jpg",
+      "category": "Healthcare",
+      "status": "Completed",
+      "featured": true
+    },
+    {
+      "id": "action-2",
+      "title": "Rural Women Vocational Training Program Launch",
+      "subtitle": "Providing tools for financial self-reliance.",
+      "description": "To empower women and enable self-reliance, we launched a vocational training drive. The training course covers fashion design, sewing machine operation, and retail bookkeeping. We also distributed 15 free sewing machines to the top performing candidates to jumpstart their home tailoring businesses.",
+      "location": "Penamaluru Community Hall",
+      "date": "2026-07-02",
+      "cover_image": "/assets/program-women.jpg",
+      "image_2": "/assets/gallery-2.jpg",
+      "image_3": "/assets/gallery-3.jpg",
+      "image_4": "/assets/gallery-1.jpg",
+      "category": "Women Empowerment",
+      "status": "Ongoing",
+      "featured": true
+    }
+  ],
+  "contact_messages": [],
+  "volunteers": [],
+  "website_settings": {
+    "organization_name": "Cheyutha Helping Society",
+    "phone": "+91 98765 43210",
+    "email": "info@cheyuthahelpingsociety.org",
+    "address": "20-1062, Muralinagar, Tadigadapa, Penamaluru, Vijayawada, Krishna, Andhra Pradesh - 520007",
+    "gmaps_link": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3825.964724490333!2d80.6974013!3d16.4774399!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a35fab630324e93%3A0x6d90a6f8b9195b05!2sTadigadapa%2C%20Vijayawada%2C%20Andhra%20Pradesh!5e0!3m2!1sen!2sin!4v1689999999999!5m2!1sen!2sin",
+    "social_facebook": "https://facebook.com/cheyuthahelpingsociety",
+    "social_twitter": "https://twitter.com/cheyutha",
+    "social_instagram": "https://instagram.com/cheyutha_helping_society",
+    "meta_title": "Cheyutha Helping Society | Trusted Legal NGO in Andhra Pradesh",
+    "meta_description": "Cheyutha Helping Society is a registered NGO under section 80G & 12A. Donate to support child education, healthcare camps, and women empowerment.",
+    "footer_text": "© 2026 Cheyutha Helping Society. All rights reserved. Registered under AP Societies Registration Act, 2001 (Reg No: 250/2025)."
+  }
+}
