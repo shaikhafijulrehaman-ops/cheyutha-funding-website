@@ -721,6 +721,23 @@ cloudinary.config({
 
 router.post('/admin/cloudinary-sign', authenticateToken, async (req, res) => {
     try {
+        // Validate Cloudinary env vars are present
+        if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+            console.error('Missing Cloudinary env vars:', {
+                CLOUDINARY_CLOUD_NAME: !!process.env.CLOUDINARY_CLOUD_NAME,
+                CLOUDINARY_API_KEY: !!process.env.CLOUDINARY_API_KEY,
+                CLOUDINARY_API_SECRET: !!process.env.CLOUDINARY_API_SECRET
+            });
+            return res.status(500).json({ error: 'Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in environment variables.' });
+        }
+
+        // Re-configure cloudinary in case env vars were loaded late
+        cloudinary.config({
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key: process.env.CLOUDINARY_API_KEY,
+            api_secret: process.env.CLOUDINARY_API_SECRET
+        });
+
         const timestamp = Math.round(Date.now() / 1000);
         const folder = req.body.folder || 'ngo-assets';
         const unique_filename = req.body.unique_filename !== undefined ? req.body.unique_filename : true;
@@ -747,12 +764,7 @@ router.post('/admin/cloudinary-sign', authenticateToken, async (req, res) => {
 
         const signature = cloudinary.utils.api_sign_request(paramsToSign, process.env.CLOUDINARY_API_SECRET);
 
-        if (process.env.NODE_ENV !== 'production') {
-            console.log('--- Generated Signature Details ---');
-            console.log('Timestamp:', timestamp);
-            console.log('Upload Parameters:', paramsToSign);
-            console.log('Signature:', signature);
-        }
+        console.log('Cloudinary sign success for cloud:', process.env.CLOUDINARY_CLOUD_NAME);
 
         res.json({
             signature,
@@ -764,6 +776,7 @@ router.post('/admin/cloudinary-sign', authenticateToken, async (req, res) => {
             overwrite
         });
     } catch (err) {
+        console.error('Cloudinary sign error:', err.message);
         res.status(500).json({ error: err.message });
     }
 });
