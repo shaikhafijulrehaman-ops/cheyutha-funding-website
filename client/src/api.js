@@ -76,7 +76,12 @@ export const api = {
         headers: headers(),
         body: JSON.stringify({ password })
     }).then(async res => {
-        const body = await res.json();
+        let body;
+        try {
+            body = await res.json();
+        } catch (e) {
+            throw new Error('Server connection error. Please try again.');
+        }
         if (!res.ok) throw new Error(body.error || 'Failed to authenticate');
         return body;
     }),

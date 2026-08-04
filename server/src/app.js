@@ -20,8 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 const clientDistPath = path.join(__dirname, '../../client/dist');
 app.use(express.static(clientDistPath));
 
-// API Routes
+// API Routes (mounted under both /api and root to support Vercel serverless function rewrites)
 app.use('/api', apiRoutes);
+app.use('/', apiRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
