@@ -118,7 +118,7 @@ export default function MainPortal({ onDonateClick, navigateTo }) {
     useEffect(() => {
         const safetyTimer = setTimeout(() => {
             setHeroLoading(false);
-        }, 2000);
+        }, 5000);
 
         const loadData = async () => {
             setHeroLoading(true);

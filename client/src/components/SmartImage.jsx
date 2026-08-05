@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, Image } from 'lucide-react';
 
+const optimizeCloudinaryUrl = (url) => {
+    if (!url || typeof url !== 'string') return url;
+    if (url.includes('res.cloudinary.com') && !url.includes('/f_auto')) {
+        return url.replace('/upload/', '/upload/f_auto,q_auto,w_800/');
+    }
+    return url;
+};
+
 const imgCache = new Set(); // Simple memory cache for loaded assets
 
 export default function SmartImage({ src, alt, className = '', style = {} }) {
@@ -25,7 +33,8 @@ export default function SmartImage({ src, alt, className = '', style = {} }) {
         setError(false);
 
         const img = new window.Image();
-        img.src = src;
+        const optimizedSrc = optimizeCloudinaryUrl(src);
+        img.src = optimizedSrc;
         img.onload = () => {
             imgCache.add(src);
             setLoading(false);
@@ -103,7 +112,7 @@ export default function SmartImage({ src, alt, className = '', style = {} }) {
                 />
             )}
             <img 
-                src={src} 
+                src={optimizeCloudinaryUrl(src)} 
                 alt={alt || "NGO Visual"} 
                 className={className}
                 loading="lazy"

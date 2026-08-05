@@ -10,6 +10,13 @@ const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const useMock = process.env.USE_MOCK_DATA === 'true';
 
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 // --- Real-time updates SSE hub ---
 let sseClients = [];
 const broadcastChange = (table, action, data) => {
@@ -141,15 +148,6 @@ router.get('/settings', async (req, res) => {
     try {
         const data = await db.getSettings();
         res.json(data);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-router.get('/slides', async (req, res) => {
-    try {
-        const data = await db.getSlides();
-        res.json(data || []);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -332,6 +330,16 @@ router.put('/admin/volunteers/:id', authenticateToken, async (req, res) => {
     }
 });
 
+router.delete('/admin/volunteers/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.deleteVolunteer(req.params.id);
+        broadcastChange('volunteers', 'delete', { id: req.params.id });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Content Management
 // Content Management
 router.post('/admin/members', authenticateToken, async (req, res) => {
@@ -470,6 +478,16 @@ router.delete('/admin/quotes/:id', authenticateToken, async (req, res) => {
         await db.deleteQuote(req.params.id);
         broadcastChange('quotes', 'delete', { id: req.params.id });
         res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.put('/admin/quotes/:id', authenticateToken, async (req, res) => {
+    try {
+        const item = await db.updateQuote(req.params.id, req.body);
+        broadcastChange('quotes', 'update', item);
+        res.json(item);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -708,15 +726,6 @@ router.post('/admin/settings', authenticateToken, async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-});
-
-// --- Secure Cloudinary Configuration ---
-const cloudinary = require('cloudinary').v2;
-
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 router.post('/admin/cloudinary-sign', authenticateToken, async (req, res) => {

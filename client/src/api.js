@@ -113,6 +113,11 @@ export const api = {
         body: JSON.stringify({ status })
     }).then(res => res.json()),
 
+    deleteVolunteer: (id, token) => fetch(`${API_URL}/admin/volunteers/${id}`, {
+        method: 'DELETE',
+        headers: headers(token)
+    }).then(res => res.json()),
+
     createMember: (data, token) => fetch(`${API_URL}/admin/members`, {
         method: 'POST',
         headers: headers(token),
@@ -161,6 +166,12 @@ export const api = {
     deleteQuote: (id, token) => fetch(`${API_URL}/admin/quotes/${id}`, {
         method: 'DELETE',
         headers: headers(token)
+    }).then(res => res.json()),
+
+    updateQuote: (id, data, token) => fetch(`${API_URL}/admin/quotes/${id}`, {
+        method: 'PUT',
+        headers: headers(token),
+        body: JSON.stringify(data)
     }).then(res => res.json()),
 
     createEvent: (data, token) => fetch(`${API_URL}/admin/events`, {

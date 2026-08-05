@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import DonateModal from './components/DonateModal';
 import MainPortal from './pages/MainPortal';
-import Transparency from './pages/Transparency';
-import Admin from './pages/Admin';
+const Transparency = React.lazy(() => import('./pages/Transparency'));
+const Admin = React.lazy(() => import('./pages/Admin'));
 import { api } from './api';
 import CustomDialogProvider from './components/CustomDialog';
 import { ToastProvider } from './components/Toast';
@@ -86,18 +86,20 @@ export default function App() {
 
                     {/* Content Pages Router */}
                     <main>
-                        {path === '/' && (
-                            <MainPortal 
-                                onDonateClick={() => setIsDonateOpen(true)} 
-                                navigateTo={navigateTo}
-                            />
-                        )}
-                        {path === '/transparency' && (
-                            <Transparency />
-                        )}
-                        {path === '/admin' && (
-                            <Admin />
-                        )}
+                        <Suspense fallback={<div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}>Loading...</div>}>
+                            {path === '/' && (
+                                <MainPortal 
+                                    onDonateClick={() => setIsDonateOpen(true)} 
+                                    navigateTo={navigateTo}
+                                />
+                            )}
+                            {path === '/transparency' && (
+                                <Transparency />
+                            )}
+                            {path === '/admin' && (
+                                <Admin />
+                            )}
+                        </Suspense>
                     </main>
 
                     {/* Global Footer (Hidden in admin mode) */}

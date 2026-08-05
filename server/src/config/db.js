@@ -304,6 +304,21 @@ const db = {
         if (error) throw error;
         return true;
     },
+    updateQuote: async (id, quote) => {
+        if (useMock) {
+            const data = readMockDb();
+            const idx = data.quotes.findIndex(q => q.id === id);
+            if (idx !== -1) {
+                data.quotes[idx] = { ...data.quotes[idx], ...quote };
+                writeMockDb(data);
+                return data.quotes[idx];
+            }
+            return null;
+        }
+        const { data, error } = await supabase.from('quotes').update(quote).eq('id', id).select();
+        if (error) throw error;
+        return data[0];
+    },
 
     // 7. News & Events (Mapped to both 'news' and 'events' tables)
     getEvents: async () => {
@@ -526,6 +541,17 @@ const db = {
         if (error) throw error;
         return data[0];
     },
+    deleteVolunteer: async (id) => {
+        if (useMock) {
+            const data = readMockDb();
+            data.volunteers = data.volunteers.filter(v => v.id !== id);
+            writeMockDb(data);
+            return true;
+        }
+        const { error } = await supabase.from('volunteers').delete().eq('id', id);
+        if (error) throw error;
+        return true;
+    },
 
     // 10. Website Settings
     getSettings: async () => {
@@ -620,19 +646,7 @@ const db = {
         if (error) throw error;
         return data;
     },
-    getSlides: async () => {
-        if (useMock) {
-            const data = readMockDb();
-            if (!data.hero_slider) {
-                data.hero_slider = [];
-                writeMockDb(data);
-            }
-            return data.hero_slider.sort((a, b) => a.sort_order - b.sort_order);
-        }
-        const { data, error } = await supabase.from('hero_slider').select('*').order('sort_order', { ascending: true });
-        if (error) throw error;
-        return data;
-    },
+
     createHeroSlide: async (slide) => {
         if (useMock) {
             const data = readMockDb();
