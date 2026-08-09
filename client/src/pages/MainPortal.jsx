@@ -114,56 +114,42 @@ export default function MainPortal({ onDonateClick, navigateTo }) {
     const statsSectionRef = useRef(null);
     const [statsVisible, setStatsVisible] = useState(false);
 
-    // Load initial data independently using Promise.allSettled
+    // Load initial data independently for each section in parallel
     useEffect(() => {
-        const safetyTimer = setTimeout(() => {
-            setHeroLoading(false);
-        }, 5000);
-
-        const loadData = async () => {
-            setHeroLoading(true);
-            try {
-                const results = await Promise.allSettled([
-                    api.getMembers(),
-                    api.getPrograms(),
-                    api.getGallery(),
-                    api.getSponsors(),
-                    api.getQuotes(),
-                    api.getEvents(),
-                    api.getSettings(),
-                    api.getGroundActions(),
-                    api.getSlides(),
-                    api.getCertificates()
-                ]);
-
-                const getValue = (idx, fallback) => {
-                    const res = results[idx];
-                    return res && res.status === 'fulfilled' && res.value !== undefined && res.value !== null ? res.value : fallback;
-                };
-
-                setMembers(getValue(0, []));
-                setPrograms(getValue(1, []));
-                setGallery(getValue(2, []));
-                setSponsors(getValue(3, []));
-                setQuotes(getValue(4, []));
-                setEvents(getValue(5, []));
-                setSettings(getValue(6, null));
-                setGroundActions(getValue(7, []));
-
-                const rawSlides = getValue(8, []);
-                const sortedSlides = Array.isArray(rawSlides) ? [...rawSlides].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)) : [];
-                setHeroSlides(sortedSlides);
-
-                setCertificates(getValue(9, []));
-            } catch (err) {
-                console.error("Content fetch error:", err);
-            } finally {
-                clearTimeout(safetyTimer);
-                setHeroLoading(false);
+        // 1. Slides / Hero
+        api.getSlides().then(rawSlides => {
+            if (Array.isArray(rawSlides) && rawSlides.length > 0) {
+                const sorted = [...rawSlides].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+                setHeroSlides(sorted);
             }
-        };
-        loadData();
-        return () => clearTimeout(safetyTimer);
+        }).catch(err => console.error("Slides fetch error:", err));
+
+        // 2. Members
+        api.getMembers().then(data => setMembers(data || [])).catch(err => console.error("Members fetch error:", err));
+
+        // 3. Programs
+        api.getPrograms().then(data => setPrograms(data || [])).catch(err => console.error("Programs fetch error:", err));
+
+        // 4. Gallery
+        api.getGallery().then(data => setGallery(data || [])).catch(err => console.error("Gallery fetch error:", err));
+
+        // 5. Sponsors
+        api.getSponsors().then(data => setSponsors(data || [])).catch(err => console.error("Sponsors fetch error:", err));
+
+        // 6. Quotes
+        api.getQuotes().then(data => setQuotes(data || [])).catch(err => console.error("Quotes fetch error:", err));
+
+        // 7. Events
+        api.getEvents().then(data => setEvents(data || [])).catch(err => console.error("Events fetch error:", err));
+
+        // 8. Settings
+        api.getSettings().then(data => data && setSettings(data)).catch(err => console.error("Settings fetch error:", err));
+
+        // 9. Ground Actions
+        api.getGroundActions().then(data => setGroundActions(data || [])).catch(err => console.error("Ground actions fetch error:", err));
+
+        // 10. Certificates
+        api.getCertificates().then(data => setCertificates(data || [])).catch(err => console.error("Certificates fetch error:", err));
     }, []);
 
     // Real-time SSE synchronization
@@ -345,22 +331,7 @@ export default function MainPortal({ onDonateClick, navigateTo }) {
             
             {/* 1. HERO SECTION */}
             <section id="home" className="hero-slider-container">
-                {heroLoading ? (
-                    <div className="hero-slide active" style={{ background: 'linear-gradient(135deg, #09331e 0%, #0f172a 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{ textAlign: 'center', color: '#ffffff' }}>
-                            <div style={{
-                                width: '40px',
-                                height: '40px',
-                                border: '3px solid rgba(255,255,255,0.2)',
-                                borderTopColor: 'var(--accent)',
-                                borderRadius: '50%',
-                                animation: 'spin-loader 1s linear infinite',
-                                margin: '0 auto 16px auto'
-                            }}></div>
-                            <p style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '0.5px' }}>Loading Hero...</p>
-                        </div>
-                    </div>
-                ) : heroSlides.length > 0 ? (
+                {heroSlides.length > 0 ? (
                     heroSlides.map((slide, index) => {
                         const hasImgError = heroImagesError[slide.id];
                         const bgUrl = (slide.image_url && !hasImgError) ? slide.image_url : null;

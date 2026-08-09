@@ -47,7 +47,7 @@ export default function Header({ activeSection, onDonateClick, currentPath, navi
                 <div className="container flex-between" style={{ height: '100%' }}>
                     {/* Logo & Brand */}
                     <div className="logo-container" style={{ cursor: 'pointer' }} onClick={() => navigateTo('/')}>
-                        <SmartImage src={logoImg} alt="Cheyutha Helping Society Logo" style={{ height: '36px', width: '36px', objectFit: 'cover', borderRadius: '50%' }} />
+                        <img src={logoImg} alt="Cheyutha Helping Society Logo" style={{ height: '36px', width: '36px', objectFit: 'cover', borderRadius: '50%' }} />
                         <div>
                             <h1 className="logo-text" style={{ margin: 0, lineHeight: 1.1 }}>
                                 CHEYUTHA

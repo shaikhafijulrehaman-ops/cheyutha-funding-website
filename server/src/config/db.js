@@ -145,7 +145,7 @@ const db = {
             return member || true;
         }
         // First retrieve row to get image_public_id for Cloudinary deletion
-        const { data: row } = await supabase.from('community_members').select('image_public_id').eq('id', id).single();
+        const { data: row } = await supabase.from('community_members').select('image_public_id').eq('id', id).maybeSingle();
         const { error } = await supabase.from('community_members').delete().eq('id', id);
         if (error) throw error;
         return row || true;
@@ -180,7 +180,7 @@ const db = {
             writeMockDb(data);
             return prog || true;
         }
-        const { data: row } = await supabase.from('programs').select('image_public_id').eq('id', id).single();
+        const { data: row } = await supabase.from('programs').select('image_public_id').eq('id', id).maybeSingle();
         const { error } = await supabase.from('programs').delete().eq('id', id);
         if (error) throw error;
         return row || true;
@@ -231,7 +231,7 @@ const db = {
             writeMockDb(data);
             return gal || true;
         }
-        const { data: row } = await supabase.from('gallery').select('cover_image_public_id, images').eq('id', id).single();
+        const { data: row } = await supabase.from('gallery').select('cover_image_public_id, images').eq('id', id).maybeSingle();
         const { error } = await supabase.from('gallery').delete().eq('id', id);
         if (error) throw error;
         return row || true;
@@ -266,7 +266,7 @@ const db = {
             writeMockDb(data);
             return spon || true;
         }
-        const { data: row } = await supabase.from('sponsors').select('logo_public_id').eq('id', id).single();
+        const { data: row } = await supabase.from('sponsors').select('logo_public_id').eq('id', id).maybeSingle();
         const { error } = await supabase.from('sponsors').delete().eq('id', id);
         if (error) throw error;
         return row || true;
@@ -330,12 +330,17 @@ const db = {
             return combined.sort((a, b) => new Date(b.date) - new Date(a.date));
         }
 
-        // Fetch from both tables
-        const { data: news, error: newsErr } = await supabase.from('news').select('*');
-        const { data: events, error: eventsErr } = await supabase.from('events').select('*');
+        // Fetch from both tables in parallel
+        const [newsRes, eventsRes] = await Promise.all([
+            supabase.from('news').select('*'),
+            supabase.from('events').select('*')
+        ]);
         
-        if (newsErr) throw newsErr;
-        if (eventsErr) throw eventsErr;
+        if (newsRes.error) throw newsRes.error;
+        if (eventsRes.error) throw eventsRes.error;
+
+        const news = newsRes.data || [];
+        const events = eventsRes.data || [];
 
         const mappedNews = news.map(n => ({
             id: n.id,
@@ -438,7 +443,7 @@ const db = {
         }
 
         // Try deleting from news first
-        const { data: newsRow } = await supabase.from('news').select('cover_image_public_id').eq('id', id).single();
+        const { data: newsRow } = await supabase.from('news').select('cover_image_public_id').eq('id', id).maybeSingle();
         if (newsRow) {
             const { error } = await supabase.from('news').delete().eq('id', id);
             if (error) throw error;
@@ -446,7 +451,7 @@ const db = {
         }
 
         // Try deleting from events
-        const { data: eventRow } = await supabase.from('events').select('cover_image_public_id').eq('id', id).single();
+        const { data: eventRow } = await supabase.from('events').select('cover_image_public_id').eq('id', id).maybeSingle();
         if (eventRow) {
             const { error } = await supabase.from('events').delete().eq('id', id);
             if (error) throw error;
@@ -626,7 +631,7 @@ const db = {
             writeMockDb(data);
             return action || true;
         }
-        const { data: row } = await supabase.from('ground_actions').select('cover_image_public_id, gallery_images').eq('id', id).single();
+        const { data: row } = await supabase.from('ground_actions').select('cover_image_public_id, gallery_images').eq('id', id).maybeSingle();
         const { error } = await supabase.from('ground_actions').delete().eq('id', id);
         if (error) throw error;
         return row || true;
@@ -669,7 +674,7 @@ const db = {
             writeMockDb(data);
             return slide || true;
         }
-        const { data: row } = await supabase.from('hero_slider').select('image_public_id').eq('id', id).single();
+        const { data: row } = await supabase.from('hero_slider').select('image_public_id').eq('id', id).maybeSingle();
         const { error } = await supabase.from('hero_slider').delete().eq('id', id);
         if (error) throw error;
         return row || true;
@@ -789,7 +794,7 @@ const db = {
         }
 
         // Try updating in news first
-        const { data: newsCheck } = await supabase.from('news').select('id').eq('id', id).single();
+        const { data: newsCheck } = await supabase.from('news').select('id').eq('id', id).maybeSingle();
         if (newsCheck) {
             const newsObj = {
                 title: eventItem.title,
@@ -804,7 +809,7 @@ const db = {
         }
 
         // Try updating in events
-        const { data: eventCheck } = await supabase.from('events').select('id').eq('id', id).single();
+        const { data: eventCheck } = await supabase.from('events').select('id').eq('id', id).maybeSingle();
         if (eventCheck) {
             const eventObj = {
                 title: eventItem.title,
@@ -878,7 +883,7 @@ const db = {
         if (useMock) {
             return true;
         }
-        const { data: row } = await supabase.from('certificates_documents').select('file_url').eq('id', id).single();
+        const { data: row } = await supabase.from('certificates_documents').select('file_url').eq('id', id).maybeSingle();
         const { error } = await supabase.from('certificates_documents').delete().eq('id', id);
         if (error) throw error;
         return row || true;
