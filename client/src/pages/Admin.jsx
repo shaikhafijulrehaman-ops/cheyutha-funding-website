@@ -845,14 +845,9 @@ export default function Admin() {
             loadTabData();
         } catch (err) {
             console.error("Technical Error during submit:", err);
-            let friendlyMsg = "Something went wrong while saving your data.";
-            const msg = err.message || "";
-            if (msg.includes("Validation Error:")) {
-                friendlyMsg = msg.replace("Validation Error:", "").trim();
-            } else if (msg.toLowerCase().includes("upload") || msg.toLowerCase().includes("cloudinary") || msg.toLowerCase().includes("signature")) {
-                friendlyMsg = "Unable to upload the image. Please try again.";
-            } else if (msg.toLowerCase().includes("database") || msg.toLowerCase().includes("column") || msg.toLowerCase().includes("relation") || msg.toLowerCase().includes("schema") || msg.toLowerCase().includes("supabase")) {
-                friendlyMsg = "Something went wrong while saving your data.";
+            let friendlyMsg = err.message || "Something went wrong while saving your data.";
+            if (friendlyMsg.includes("Validation Error:")) {
+                friendlyMsg = friendlyMsg.replace("Validation Error:", "").trim();
             }
             showToast(friendlyMsg, "error");
         } finally {

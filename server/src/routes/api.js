@@ -730,22 +730,20 @@ router.post('/admin/settings', authenticateToken, async (req, res) => {
 
 router.post('/admin/cloudinary-sign', authenticateToken, async (req, res) => {
     try {
-        // Validate Cloudinary env vars are present
-        if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-            console.error('Missing Cloudinary env vars:', {
-                CLOUDINARY_CLOUD_NAME: !!process.env.CLOUDINARY_CLOUD_NAME,
-                CLOUDINARY_API_KEY: !!process.env.CLOUDINARY_API_KEY,
-                CLOUDINARY_API_SECRET: !!process.env.CLOUDINARY_API_SECRET
+        const cloud_name = process.env.CLOUDINARY_CLOUD_NAME;
+        const api_key = process.env.CLOUDINARY_API_KEY;
+        const api_secret = process.env.CLOUDINARY_API_SECRET;
+
+        if (!cloud_name || !api_key || !api_secret || cloud_name === 'CLOUDINARY_CLOUD_NAME') {
+            console.error('Missing or placeholder Cloudinary configuration:', {
+                cloud_name: cloud_name || 'MISSING',
+                api_key: api_key ? 'SET' : 'MISSING',
+                api_secret: api_secret ? 'SET' : 'MISSING'
             });
-            return res.status(500).json({ error: 'Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in environment variables.' });
+            return res.status(500).json({ error: 'Cloudinary is not properly configured on the server. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your Render environment variables.' });
         }
 
-        // Re-configure cloudinary in case env vars were loaded late
-        cloudinary.config({
-            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-            api_key: process.env.CLOUDINARY_API_KEY,
-            api_secret: process.env.CLOUDINARY_API_SECRET
-        });
+        cloudinary.config({ cloud_name, api_key, api_secret });
 
         const timestamp = Math.round(Date.now() / 1000);
         const folder = req.body.folder || 'ngo-assets';
@@ -771,15 +769,13 @@ router.post('/admin/cloudinary-sign', authenticateToken, async (req, res) => {
             });
         }
 
-        const signature = cloudinary.utils.api_sign_request(paramsToSign, process.env.CLOUDINARY_API_SECRET);
-
-        console.log('Cloudinary sign success for cloud:', process.env.CLOUDINARY_CLOUD_NAME);
+        const signature = cloudinary.utils.api_sign_request(paramsToSign, api_secret);
 
         res.json({
             signature,
             timestamp,
-            api_key: process.env.CLOUDINARY_API_KEY,
-            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key,
+            cloud_name,
             folder,
             unique_filename,
             overwrite

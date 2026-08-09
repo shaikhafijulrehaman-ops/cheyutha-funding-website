@@ -269,6 +269,16 @@ export const api = {
     }).then(res => res.json()),
 
     uploadImage: async (file, token, options = {}) => {
+        if (!file) {
+            throw new Error('No file provided for upload');
+        }
+
+        // Validate file size (10MB limit)
+        const maxSize = 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+            throw new Error('File size exceeds 10MB limit.');
+        }
+
         // 1. Fetch secure signature from backend
         const signRes = await fetch(`${API_URL}/admin/cloudinary-sign`, {
             method: 'POST',
@@ -282,20 +292,28 @@ export const api = {
                 overwrite: options.overwrite !== undefined ? options.overwrite : true
             })
         });
-        const signData = await signRes.json();
+        
+        let signData;
+        try {
+            signData = await signRes.json();
+        } catch (e) {
+            throw new Error('Server authentication error during Cloudinary signature generation.');
+        }
+
         if (!signRes.ok || signData.error) {
             throw new Error(signData.error || 'Failed to sign upload parameters');
         }
 
         // Mock mode client fallback
         if (signData.cloud_name === 'mock-cloud') {
-            if (import.meta.env.DEV) {
-                console.log('[Cloudinary Client Upload] MOCK MODE: returning mock assets');
-            }
             return {
                 url: `/uploads/${file.name || 'mock-file.jpg'}`,
                 public_id: `mock-${Date.now()}`
             };
+        }
+
+        if (!signData.cloud_name || !signData.api_key || !signData.signature) {
+            throw new Error('Server configuration error: Cloudinary upload credentials not received');
         }
 
         // 2. Perform direct upload to Cloudinary
@@ -304,33 +322,20 @@ export const api = {
         formData.append('api_key', signData.api_key);
         formData.append('timestamp', signData.timestamp);
         formData.append('signature', signData.signature);
-        formData.append('folder', signData.folder);
+        formData.append('folder', signData.folder || 'ngo-assets');
         formData.append('unique_filename', signData.unique_filename ? 'true' : 'false');
         formData.append('overwrite', signData.overwrite ? 'true' : 'false');
-
-        if (import.meta.env.DEV) {
-            console.log('[Cloudinary Client Upload] Parameters:', {
-                api_key: signData.api_key,
-                timestamp: signData.timestamp,
-                signature: signData.signature,
-                folder: signData.folder,
-                unique_filename: signData.unique_filename,
-                overwrite: signData.overwrite
-            });
-        }
 
         const uploadUrl = `https://api.cloudinary.com/v1_1/${signData.cloud_name}/auto/upload`;
         const uploadRes = await fetch(uploadUrl, {
             method: 'POST',
             body: formData
         });
+        
         const uploadData = await uploadRes.json();
         if (!uploadRes.ok || uploadData.error) {
-            throw new Error(uploadData.error?.message || 'Direct Cloudinary upload failed');
-        }
-
-        if (import.meta.env.DEV) {
-            console.log('[Cloudinary Client Upload] Response:', uploadData);
+            console.error('[Cloudinary Upload Error]', uploadData);
+            throw new Error(uploadData.error?.message || 'Direct Cloudinary upload failed. Check file format or network connection.');
         }
 
         return {
