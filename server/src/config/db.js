@@ -254,7 +254,9 @@ const db = {
             writeMockDb(data);
             return newSpon;
         }
-        const { data, error } = await supabase.from('sponsors').insert([stripLocalFields(sponsor)]).select();
+        const dbSponsor = stripLocalFields(sponsor);
+        delete dbSponsor.description;
+        const { data, error } = await supabase.from('sponsors').insert([dbSponsor]).select();
         if (error) throw error;
         return data[0];
     },
@@ -770,7 +772,9 @@ const db = {
             }
             return null;
         }
-        const { data, error } = await supabase.from('sponsors').update(stripLocalFields(sponsor)).eq('id', id).select();
+        const dbSponsor = stripLocalFields(sponsor);
+        delete dbSponsor.description;
+        const { data, error } = await supabase.from('sponsors').update(dbSponsor).eq('id', id).select();
         if (error) throw error;
         return data[0];
     },

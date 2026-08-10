@@ -46,7 +46,7 @@ export default function Admin() {
     const [newMember, setNewMember] = useState({ name: '', role: '', department: '', description: '', image_url: '', image_public_id: '', sort_order: 0, localFile: null });
     const [newProgram, setNewProgram] = useState({ title: '', description: '', image_url: '', image_public_id: '', sort_order: 0, localFile: null });
     const [newGallery, setNewGallery] = useState({ album_title: '', description: '', cover_image: '', cover_image_public_id: '', images: [], localCover: null, localImages: [] });
-    const [newSponsor, setNewSponsor] = useState({ name: '', logo_url: '', logo_public_id: '', website: '', description: '', sort_order: 0, localFile: null });
+    const [newSponsor, setNewSponsor] = useState({ name: '', logo_url: '', logo_public_id: '', website: '', sort_order: 0, localFile: null });
     const [newQuote, setNewQuote] = useState({ quote: '', author: '' });
     const [newEvent, setNewEvent] = useState({ title: '', content: '', description: '', type: 'event', date: '', time: '10:00 AM', location: '', category: 'General', status: 'Planned', image_url: '', image_public_id: '', localFile: null });
     const [newGroundAction, setNewGroundAction] = useState({ title: '', subtitle: '', description: '', location: '', date: '', cover_image: '', cover_image_public_id: '', gallery_images: [], category: '', status: 'Completed', featured: false, localCover: null, localImages: [] });
@@ -109,7 +109,7 @@ export default function Admin() {
         setNewMember({ name: '', role: '', department: '', description: '', image_url: '', image_public_id: '', sort_order: 0, localFile: null });
         setNewProgram({ title: '', description: '', image_url: '', image_public_id: '', sort_order: 0, localFile: null });
         setNewGallery({ album_title: '', description: '', cover_image: '', cover_image_public_id: '', images: [], localCover: null, localImages: [] });
-        setNewSponsor({ name: '', logo_url: '', logo_public_id: '', website: '', description: '', sort_order: 0, localFile: null });
+        setNewSponsor({ name: '', logo_url: '', logo_public_id: '', website: '', sort_order: 0, localFile: null });
         setNewQuote({ quote: '', author: '' });
         setNewEvent({ title: '', content: '', description: '', type: 'event', date: '', time: '10:00 AM', location: '', category: 'General', status: 'Planned', image_url: '', image_public_id: '', localFile: null });
         setNewGroundAction({ title: '', subtitle: '', description: '', location: '', date: '', cover_image: '', cover_image_public_id: '', gallery_images: [], category: '', status: 'Completed', featured: false, localCover: null, localImages: [] });
@@ -271,7 +271,6 @@ export default function Admin() {
                 logo_url: item.logo_url,
                 logo_public_id: item.logo_public_id || '',
                 website: item.website || '',
-                description: item.description || '',
                 sort_order: item.sort_order || 0
             });
         } else if (type === 'quote') {
@@ -572,7 +571,6 @@ export default function Admin() {
                     const payload = {
                         name: newSponsor.name,
                         website: newSponsor.website,
-                        description: newSponsor.description,
                         sort_order: parseInt(newSponsor.sort_order) || 0,
                         logo_url: finalUrl,
                         logo_public_id: finalPublicId
