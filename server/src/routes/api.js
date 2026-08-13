@@ -34,7 +34,7 @@ router.get('/realtime', (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Enable CORS
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || 'https://cheyutha-india.org');
     
     // Heartbeat every 20 seconds
     const timer = setInterval(() => {
@@ -69,7 +69,7 @@ router.post('/auth/login', (req, res) => {
     const inputPass = String(password || '').trim();
     const targetPass = String(process.env.ADMIN_PASSWORD || 'admin123').trim();
     
-    if (inputPass === targetPass || inputPass === 'admin123') {
+    if (inputPass && inputPass === targetPass) {
         const token = jwt.sign({ role: 'admin' }, JWT_SECRET, { expiresIn: '8h' });
         return res.json({ token });
     }

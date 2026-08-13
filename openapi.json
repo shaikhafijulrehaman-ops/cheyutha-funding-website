@@ -1,0 +1,317 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Cheyutha Helping Society NGO API",
+    "version": "1.0.0",
+    "description": "API documentation for Cheyutha Helping Society NGO web application. Includes public content endpoints, donation payment flow, contact/volunteer forms, and protected admin CRUD routes."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local Development Server"
+    },
+    {
+      "url": "https://cheyutha-funding-website.onrender.com/api",
+      "description": "Hosted Production Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check endpoint",
+        "responses": {
+          "200": {
+            "description": "Server is healthy"
+          }
+        }
+      }
+    },
+    "/members": {
+      "get": {
+        "summary": "Get all community members",
+        "responses": {
+          "200": {
+            "description": "List of members"
+          }
+        }
+      }
+    },
+    "/programs": {
+      "get": {
+        "summary": "Get all NGO programs",
+        "responses": {
+          "200": {
+            "description": "List of programs"
+          }
+        }
+      }
+    },
+    "/gallery": {
+      "get": {
+        "summary": "Get gallery albums and images",
+        "responses": {
+          "200": {
+            "description": "List of gallery albums"
+          }
+        }
+      }
+    },
+    "/sponsors": {
+      "get": {
+        "summary": "Get all sponsors",
+        "responses": {
+          "200": {
+            "description": "List of sponsors"
+          }
+        }
+      }
+    },
+    "/quotes": {
+      "get": {
+        "summary": "Get inspirational quotes",
+        "responses": {
+          "200": {
+            "description": "List of quotes"
+          }
+        }
+      }
+    },
+    "/events": {
+      "get": {
+        "summary": "Get upcoming and past events",
+        "responses": {
+          "200": {
+            "description": "List of events"
+          }
+        }
+      }
+    },
+    "/ground-actions": {
+      "get": {
+        "summary": "Get ground action stories",
+        "responses": {
+          "200": {
+            "description": "List of ground actions"
+          }
+        }
+      }
+    },
+    "/slides": {
+      "get": {
+        "summary": "Get hero slider banners",
+        "responses": {
+          "200": {
+            "description": "List of slider banners"
+          }
+        }
+      }
+    },
+    "/certificates": {
+      "get": {
+        "summary": "Get 80G, 12A, CSR, and legal transparency certificates",
+        "responses": {
+          "200": {
+            "description": "List of legal certificates"
+          }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "summary": "Get global website settings and contact info",
+        "responses": {
+          "200": {
+            "description": "Website settings object"
+          }
+        }
+      }
+    },
+    "/contact": {
+      "post": {
+        "summary": "Submit a contact form message",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "message"],
+                "properties": {
+                  "name": { "type": "string", "example": "John Doe" },
+                  "email": { "type": "string", "example": "john@example.com" },
+                  "phone": { "type": "string", "example": "9876543210" },
+                  "message": { "type": "string", "example": "I would like to inquire about your programs." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Message submitted successfully" },
+          "400": { "description": "Missing required fields" }
+        }
+      }
+    },
+    "/volunteer": {
+      "post": {
+        "summary": "Submit a volunteer application",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "phone"],
+                "properties": {
+                  "name": { "type": "string", "example": "Jane Smith" },
+                  "email": { "type": "string", "example": "jane@example.com" },
+                  "phone": { "type": "string", "example": "9876543210" },
+                  "message": { "type": "string", "example": "I want to help with weekend teaching drives." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Application submitted successfully" },
+          "400": { "description": "Missing required fields" }
+        }
+      }
+    },
+    "/donations/order": {
+      "post": {
+        "summary": "Create a Razorpay donation order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["amount", "donor_name", "donor_email", "donor_phone", "pan_number"],
+                "properties": {
+                  "amount": { "type": "number", "example": 1000 },
+                  "donor_name": { "type": "string", "example": "Ramesh Kumar" },
+                  "donor_email": { "type": "string", "example": "ramesh@example.com" },
+                  "donor_phone": { "type": "string", "example": "9876543210" },
+                  "pan_number": { "type": "string", "example": "ABCDE1234F" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Order created successfully" },
+          "400": { "description": "Invalid input fields" }
+        }
+      }
+    },
+    "/donations/verify": {
+      "post": {
+        "summary": "Verify Razorpay payment signature & issue receipt",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["razorpay_order_id", "razorpay_payment_id"],
+                "properties": {
+                  "razorpay_order_id": { "type": "string", "example": "order_mock_12345" },
+                  "razorpay_payment_id": { "type": "string", "example": "pay_mock_67890" },
+                  "razorpay_signature": { "type": "string", "example": "sig_mock_112233" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Payment verified and receipt generated" },
+          "400": { "description": "Signature verification failed" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Admin login with password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["password"],
+                "properties": {
+                  "password": { "type": "string", "example": "admin123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful, returns JWT token" },
+          "401": { "description": "Incorrect administrator password" }
+        }
+      }
+    },
+    "/auth/verify": {
+      "get": {
+        "summary": "Verify admin JWT token validity",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Token valid" },
+          "401": { "description": "Access token required" },
+          "403": { "description": "Invalid or expired token" }
+        }
+      }
+    },
+    "/admin/donations": {
+      "get": {
+        "summary": "Get donation history (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List of donations" } }
+      }
+    },
+    "/admin/messages": {
+      "get": {
+        "summary": "Get contact messages (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List of messages" } }
+      }
+    },
+    "/admin/volunteers": {
+      "get": {
+        "summary": "Get volunteer applications (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "List of volunteers" } }
+      }
+    },
+    "/admin/cloudinary-sign": {
+      "post": {
+        "summary": "Generate Cloudinary upload signature (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "folder": { "type": "string", "example": "ngo-assets" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Signature generated" } }
+      }
+    }
+  }
+}

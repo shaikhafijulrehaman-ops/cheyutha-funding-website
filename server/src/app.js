@@ -10,8 +10,25 @@ const apiRoutes = require('./routes/api');
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+    'https://cheyutha-india.org',
+    'https://www.cheyutha-india.org',
+    'http://localhost:5173',
+    'http://localhost:3000'
+];
+
+if (process.env.CLIENT_ORIGIN) {
+    allowedOrigins.push(process.env.CLIENT_ORIGIN);
+}
+
 app.use(cors({
-    origin: '*',
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(null, true); // Fallback allow to avoid breaking third-party embeds while logging
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));

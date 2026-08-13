@@ -1,0 +1,68 @@
+Cheyutha Helping Society NGO - Complete API Documentation
+
+BASE URLS:
+- Local Development: http://localhost:5000/api
+- Live Production: https://cheyutha-funding-website.onrender.com/api
+
+AUTHENTICATION:
+- Login Endpoint: POST /api/auth/login
+- Payload: {"password": "admin123"}
+- Response: {"token": "<JWT_TOKEN>"}
+- Protected Endpoints Header: Authorization: Bearer <token>
+
+PUBLIC GET ENDPOINTS (No Auth):
+1. GET /api/members - List community members
+2. GET /api/programs - List NGO programs
+3. GET /api/gallery - List photo albums and images
+4. GET /api/sponsors - List sponsors
+5. GET /api/quotes - List quotes
+6. GET /api/events - List events
+7. GET /api/ground-actions - List ground action stories
+8. GET /api/slides - List hero slider banners
+9. GET /api/certificates - List legal documents (12A, 80G, CSR, PAN)
+10. GET /api/settings - List global site settings
+11. GET /health - Health check
+
+PUBLIC FORM & PAYMENT ENDPOINTS (No Auth):
+1. POST /api/contact
+   Payload: {"name": "Test Name", "email": "test@example.com", "phone": "9876543210", "message": "Test inquiry message"}
+2. POST /api/volunteer
+   Payload: {"name": "Volunteer Name", "email": "vol@example.com", "phone": "9876543210", "message": "Volunteer test"}
+3. POST /api/donations/order
+   Payload: {"amount": 1000, "donor_name": "Donor Name", "donor_email": "donor@example.com", "donor_phone": "9876543210", "pan_number": "ABCDE1234F"}
+4. POST /api/donations/verify
+   Payload: {"razorpay_order_id": "order_mock_123", "razorpay_payment_id": "pay_mock_456", "razorpay_signature": "sig_mock_789"}
+
+PROTECTED ADMIN ENDPOINTS (Requires Authorization: Bearer <token>):
+1. GET /api/admin/donations
+2. GET /api/admin/messages
+3. PUT /api/admin/messages/:id - Body: {"status": "read"}
+4. DELETE /api/admin/messages/:id
+5. GET /api/admin/volunteers
+6. PUT /api/admin/volunteers/:id - Body: {"status": "accepted"}
+7. DELETE /api/admin/volunteers/:id
+8. POST /api/admin/members - Body: {"name": "Member Name", "role": "Role", "department": "Dept"}
+9. PUT /api/admin/members/:id
+10. DELETE /api/admin/members/:id
+11. POST /api/admin/programs - Body: {"title": "Program Title", "description": "Desc"}
+12. PUT /api/admin/programs/:id
+13. DELETE /api/admin/programs/:id
+14. POST /api/admin/gallery - Body: {"album_title": "Album Title", "cover_image": "http://example.com/img.jpg", "cover_image_public_id": "id123"}
+15. DELETE /api/admin/gallery/:id
+16. POST /api/admin/sponsors - Body: {"name": "Sponsor Name", "logo_url": "http://example.com/logo.jpg", "logo_public_id": "id123"}
+17. DELETE /api/admin/sponsors/:id
+18. POST /api/admin/quotes - Body: {"quote": "Quote text", "author": "Author"}
+19. PUT /api/admin/quotes/:id
+20. DELETE /api/admin/quotes/:id
+21. POST /api/admin/events - Body: {"title": "Event Title", "short_description": "Short", "full_description": "Full", "event_date": "2026-09-01", "event_time": "10:00 AM", "location": "AP", "category": "General"}
+22. DELETE /api/admin/events/:id
+23. POST /api/admin/ground-actions - Body: {"title": "Action Title", "description": "Desc", "location": "AP", "date": "2026-08-01", "cover_image": "http://example.com/img.jpg", "cover_image_public_id": "id123"}
+24. DELETE /api/admin/ground-actions/:id
+25. POST /api/admin/slides - Body: {"title": "Slide Title", "description": "Desc", "image_url": "http://example.com/img.jpg", "image_public_id": "id123"}
+26. DELETE /api/admin/slides/:id
+27. POST /api/admin/slides/reorder
+28. POST /api/admin/certificates - Body: {"title": "Section 80G", "category": "Tax Exemption", "file_url": "http://example.com/doc.pdf", "file_public_id": "id123"}
+29. DELETE /api/admin/certificates/:id
+30. POST /api/admin/settings
+31. POST /api/admin/cloudinary-sign - Body: {"folder": "ngo-assets"}
+32. DELETE /api/admin/cloudinary - Body: {"public_id": "id123"}
