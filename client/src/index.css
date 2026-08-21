@@ -405,7 +405,7 @@ button, input, textarea, select {
 /* Hero Section */
 .hero-slider-container {
   width: 100%;
-  background-color: #ffffff;
+  background-color: #1a1a1a;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -415,7 +415,7 @@ button, input, textarea, select {
 .hero-slide {
   width: 100%;
   display: none;
-  background-color: #ffffff;
+  background-color: #1a1a1a;
   justify-content: center;
   align-items: center;
   transition: opacity 0.5s ease-in-out;
@@ -423,12 +423,20 @@ button, input, textarea, select {
 
 .hero-slide.active {
   display: flex;
+  animation: fadeIn 0.4s ease-in-out;
 }
 
-.hero-image {
+.hero-image.landscape {
   width: 100%;
-  height: auto;
-  max-height: 70vh;
+  height: 60vh;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-image.portrait {
+  width: auto;
+  max-width: 100%;
+  height: 65vh;
   object-fit: contain;
   display: block;
   margin: 0 auto;
@@ -1579,12 +1587,21 @@ button, input, textarea, select {
   .hero-slider-container {
     height: auto !important;
     min-height: 150px !important;
+    background-color: #1a1a1a !important;
   }
 
-  .hero-image {
-    max-height: none !important;
-    height: auto !important;
+  .hero-image.landscape {
+    height: 35vh !important;
     width: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .hero-image.portrait {
+    height: 60vh !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
   }
 
   .community-img-wrapper {

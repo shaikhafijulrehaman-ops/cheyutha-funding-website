@@ -97,6 +97,7 @@ export default function MainPortal({ onDonateClick, navigateTo }) {
     const [activeAboutTab, setActiveAboutTab] = useState('story');
     const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
     const [activeHeroIndex, setActiveHeroIndex] = useState(0);
+    const [slideAspects, setSlideAspects] = useState({});
     const [selectedActivity, setSelectedActivity] = useState(null);
     const [selectedGalleryItem, setSelectedGalleryItem] = useState(null);
     const [selectedGroundAction, setSelectedGroundAction] = useState(null);
@@ -344,8 +345,13 @@ export default function MainPortal({ onDonateClick, navigateTo }) {
                                     <img 
                                         src={slide.image_url} 
                                         alt={slide.title || "Hero banner"} 
-                                        className="hero-image"
+                                        className={`hero-image ${slideAspects[slide.id] || 'landscape'}`}
                                         loading={index === 0 ? "eager" : "lazy"}
+                                        onLoad={(e) => {
+                                            const { naturalWidth, naturalHeight } = e.target;
+                                            const aspect = naturalWidth > naturalHeight ? 'landscape' : 'portrait';
+                                            setSlideAspects(prev => ({ ...prev, [slide.id]: aspect }));
+                                        }}
                                         onError={(err) => {
                                             console.error(`Hero image load error for "${slide.title}":`, slide.image_url, err);
                                         }}

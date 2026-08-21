@@ -737,9 +737,6 @@ export default function Admin() {
                 showToast(editingId ? "Successfully Updated" : "Successfully Published", "success");
 
             } else if (type === 'slide') {
-                if (!newSlide.title || !newSlide.description) {
-                    throw new Error("Validation Error: Slide title and description are required.");
-                }
                 if (!editingId && !newSlide.localFile) {
                     throw new Error("Validation Error: High-res slide background photo is required.");
                 }
@@ -761,12 +758,12 @@ export default function Admin() {
                 let saved = null;
                 try {
                     const payload = {
-                        title: newSlide.title,
-                        description: newSlide.description,
+                        title: newSlide.title || 'Slide',
+                        description: newSlide.description || '',
                         image_url: finalUrl,
                         image_public_id: finalPublicId,
-                        cta_text: newSlide.cta_text,
-                        cta_link: newSlide.cta_link,
+                        cta_text: newSlide.cta_text || '',
+                        cta_link: newSlide.cta_link || '',
                         sort_order: parseInt(newSlide.sort_order) || 0
                     };
                     if (editingId) {
@@ -1177,18 +1174,6 @@ export default function Admin() {
                                 <h3>{editingId ? '✏ Edit Slide' : '➕ Add Slide'}</h3>
                                 <form onSubmit={(e) => handleSubmitItem(e, 'slide')} style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
                                     <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                                        <label>Slide Title</label>
-                                        <input type="text" className="form-control" required value={newSlide.title} onChange={(e) => setNewSlide({...newSlide, title: e.target.value})} />
-                                    </div>
-                                    <div className="form-group" style={{ gridColumn: 'span 2' }}>
-                                        <label>Description Paragraph</label>
-                                        <textarea className="form-control" rows="2" required value={newSlide.description} onChange={(e) => setNewSlide({...newSlide, description: e.target.value})}></textarea>
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Button Text (CTA)</label>
-                                        <input type="text" className="form-control" value={newSlide.cta_text} onChange={(e) => setNewSlide({...newSlide, cta_text: e.target.value})} />
-                                    </div>
-                                    <div className="form-group">
                                         <label>Sort Order Index</label>
                                         <input type="number" className="form-control" value={newSlide.sort_order} onChange={(e) => setNewSlide({...newSlide, sort_order: parseInt(e.target.value)})} />
                                     </div>
@@ -1213,8 +1198,6 @@ export default function Admin() {
                                     <thead>
                                         <tr>
                                             <th>Cover</th>
-                                            <th>Title</th>
-                                            <th>Description</th>
                                             <th>Priority Order</th>
                                             <th>Move</th>
                                             <th>Actions</th>
@@ -1224,8 +1207,6 @@ export default function Admin() {
                                         {paginatedItems.map((slide, idx) => (
                                             <tr key={slide.id}>
                                                 <td><img src={slide.image_url} alt="slide" style={{ width: '80px', height: '45px', objectFit: 'cover', borderRadius: '4px' }} /></td>
-                                                <td><strong>{slide.title}</strong></td>
-                                                <td style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{slide.description}</td>
                                                 <td>Priority: {slide.sort_order}</td>
                                                 <td>
                                                     <div style={{ display: 'flex', gap: '4px' }}>
