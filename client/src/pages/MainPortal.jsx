@@ -9,6 +9,7 @@ import SmartImage from '../components/SmartImage';
 import SectionHeader from '../components/SectionHeader';
 import TransparencyCarousel from '../components/TransparencyCarousel';
 import { getResolvedDocuments } from '../utils/transparencyDocs';
+import logoImg from '../assets/logo.jpeg';
 
 // Reusable horizontal category slider with smooth arrow buttons
 const CategorySlider = ({ children }) => {
@@ -333,55 +334,30 @@ export default function MainPortal({ onDonateClick, navigateTo }) {
             <section id="home" className="hero-slider-container">
                 {heroSlides.length > 0 ? (
                     heroSlides.map((slide, index) => {
-                        const hasImgError = heroImagesError[slide.id];
-                        const bgUrl = (slide.image_url && !hasImgError) ? slide.image_url : null;
+                        const isActive = activeHeroIndex === index;
                         return (
                             <div 
                                 key={slide.id} 
-                                className={`hero-slide ${activeHeroIndex === index ? 'active' : ''}`}
-                                style={{
-                                    backgroundImage: bgUrl ? `url(${bgUrl})` : 'linear-gradient(135deg, #09331e 0%, #0f172a 100%)',
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center'
-                                }}
+                                className={`hero-slide ${isActive ? 'active' : ''}`}
                             >
                                 {slide.image_url && (
                                     <img 
                                         src={slide.image_url} 
-                                        alt={slide.title} 
-                                        style={{ display: 'none' }}
+                                        alt={slide.title || "Hero banner"} 
+                                        className="hero-image"
+                                        loading={index === 0 ? "eager" : "lazy"}
                                         onError={(err) => {
                                             console.error(`Hero image load error for "${slide.title}":`, slide.image_url, err);
-                                            setHeroImagesError(prev => ({ ...prev, [slide.id]: true }));
                                         }}
                                     />
                                 )}
-                                <div className="container">
-                                    <div className="hero-content animate-fade-in-up">
-                                        <h1>{slide.title}</h1>
-                                        <p>{slide.description}</p>
-                                        <div className="hero-actions">
-                                            <button onClick={onDonateClick} className="btn btn-primary btn-pulse">
-                                                {slide.cta_text || 'Donate Now'}
-                                            </button>
-                                            <a href="#about" onClick={(e) => { e.preventDefault(); document.getElementById('about').scrollIntoView({ behavior: 'smooth' }); }} className="btn btn-white">Learn More</a>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         );
                     })
                 ) : (
-                    <div className="hero-slide active" style={{ background: 'linear-gradient(135deg, #09331e 0%, #0f172a 100%)' }}>
-                        <div className="container">
-                            <div className="hero-content animate-fade-in-up">
-                                <h1>Cheyutha Helping Society</h1>
-                                <p>A registered non-profit organization dedicated to ground-level education support, healthcare camps, and women vocational training in Andhra Pradesh.</p>
-                                <div className="hero-actions">
-                                    <button onClick={onDonateClick} className="btn btn-primary btn-pulse">Donate Now</button>
-                                    <a href="#about" onClick={(e) => { e.preventDefault(); document.getElementById('about').scrollIntoView({ behavior: 'smooth' }); }} className="btn btn-white">Learn More</a>
-                                </div>
-                            </div>
+                    <div className="hero-slide active">
+                        <div className="hero-fallback-empty">
+                            <img src={logoImg} alt="Cheyutha Helping Society" className="hero-fallback-logo" />
                         </div>
                     </div>
                 )}

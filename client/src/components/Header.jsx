@@ -43,7 +43,7 @@ export default function Header({ activeSection, onDonateClick, currentPath, navi
 
     return (
         <>
-            <header className={`header-wrapper ${showSolidHeader ? 'scrolled' : 'transparent'}`}>
+            <header className="header-wrapper scrolled">
                 <div className="container flex-between" style={{ height: '100%' }}>
                     {/* Logo & Brand */}
                     <div className="logo-container" style={{ cursor: 'pointer' }} onClick={() => navigateTo('/')}>
